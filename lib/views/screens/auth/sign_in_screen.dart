@@ -26,7 +26,7 @@ class _SignInScreenState extends State<SignInScreen> {
   TextEditingController passwordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    phoneController.text = "0789814863";
+    // phoneController.text = "0789814863";
     final authController = Provider.of<AuthController>(context);
 
     return Scaffold(

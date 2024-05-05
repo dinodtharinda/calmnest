@@ -35,35 +35,37 @@ class HttpService extends ChangeNotifier {
     String uri,
     Future<http.Response> Function() requestFunction,
   ) async {
-    // try {
-    print("come");
-    final response = await requestFunction();
+    try {
+      print("come");
+      final response = await requestFunction();
 
-    
-    print("done");
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      final ResponseModel res =
-          ResponseModel(data: json.decode(response.body), isSuccess: true);
-      http.Client().close();
-      print("done 1");
-      debugPrint(
-          '====> API Response: [${response.statusCode}] $uri\n${response.body}');
+      print("done");
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        if (response.body.isEmpty) {
+          return ResponseModel(data: "Done", isSuccess: true);
+        }
+        final ResponseModel res =
+            ResponseModel(data: json.decode(response.body), isSuccess: true);
+        http.Client().close();
+        print("done 1");
+        debugPrint(
+            '====> API Response: [${response.statusCode}] $uri\n${response.body}');
 
-      return res;
-    } else {
-      debugPrint(
-          '====> API Response: [${response.statusCode}] $uri\n${response.body}');
+        return res;
+      } else {
+        debugPrint(
+            '====> API Response: [${response.statusCode}] $uri\n${response.body}');
+        return ResponseModel(
+          isSuccess: false,
+          data: null,
+          errorMessage: json.decode(response.body)['msg'],
+        );
+      }
+    } catch (error) {
+      debugPrint('====> API Error: $error');
       return ResponseModel(
-        isSuccess: false,
-        data: null,
-        errorMessage: json.decode(response.body)['msg'],
-      );
+          isSuccess: false, data: null, errorMessage: '$error');
     }
-    // } catch (error) {
-    //   debugPrint('====> API Error: $error');
-    //   return ResponseModel(
-    //       isSuccess: false, data: null, errorMessage: '$error');
-    // }
   }
 
   Future<ResponseModel> getData({
